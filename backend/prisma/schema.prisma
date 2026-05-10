@@ -10,4 +10,82 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SpiritCategory {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  bottles Bottle[]
+}
+
+model Glass {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  drinks Drink[]
+}
+
+model TasteNote {
+  id     Int              @id @default(autoincrement())
+  name   String           @unique @db.VarChar(100)
+  drinks DrinkTasteNote[]
+}
+
+model Brand {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  bottles Bottle[]
+}
+
+model Bottle {
+  id          Int            @id @default(autoincrement())
+  brandId     Int
+  categoryId  Int
+  name        String
+  abv         Decimal?       @db.Decimal(5, 2)
+  proof       Decimal?       @db.Decimal(5, 2)
+  brand       Brand          @relation(fields: [brandId], references: [id])
+  category    SpiritCategory @relation(fields: [categoryId], references: [id])
+  ingredients Ingredient[]
+}
+
+model Ingredient {
+  id       Int               @id @default(autoincrement())
+  name     String            @unique
+  bottleId Int?
+  bottle   Bottle?           @relation(fields: [bottleId], references: [id])
+  drinks   DrinkIngredient[]
+}
+
+model Drink {
+  id          Int               @id @default(autoincrement())
+  name        String
+  glassId     Int
+  method      String
+  garnish     String?
+  glass       Glass             @relation(fields: [glassId], references: [id])
+  ingredients DrinkIngredient[]
+  tasteNotes  DrinkTasteNote[]
+}
+
+model DrinkIngredient {
+  id           Int        @id @default(autoincrement())
+  drinkId      Int
+  ingredientId Int
+  quantity     Decimal?   @db.Decimal(6, 2)
+  unit         String?    @db.VarChar(50)
+  note         String?    @db.VarChar(255)
+  sortOrder    Int        @default(0)
+  drink        Drink      @relation(fields: [drinkId], references: [id])
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+}
+
+model DrinkTasteNote {
+  drinkId     Int
+  tasteNoteId Int
+  source      String?
+  drink       Drink     @relation(fields: [drinkId], references: [id])
+  tasteNote   TasteNote @relation(fields: [tasteNoteId], references: [id])
+
+  @@id([drinkId, tasteNoteId])
 }

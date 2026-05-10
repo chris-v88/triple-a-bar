@@ -1,5 +1,13 @@
 {
-  "version": 2,
-  "builds": [{ "src": "backend/src/index.ts", "use": "@vercel/node" }],
-  "routes": [{ "src": "/api/(.*)", "dest": "backend/src/index.ts" }]
+  "experimentalServices": {
+    "frontend": {
+      "entrypoint": "frontend",
+      "routePrefix": "/",
+      "framework": "vite"
+    },
+    "backend": {
+      "entrypoint": "backend",
+      "routePrefix": "/api"
+    }
+  }
 }
