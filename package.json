@@ -1,0 +1,23 @@
+{
+  "name": "triple-a-bar",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "ci": "npm ci --prefix frontend && npm ci --prefix backend",
+
+    "dev": "npm run dev:frontend & npm run dev:backend",
+    "dev:frontend": "npm start --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "npm run build --prefix frontend",
+    "build:backend": "npm run build --prefix backend",
+
+    "start": "npm run start:frontend & npm run start:backend",
+    "start:frontend": "npm start --prefix frontend",
+    "start:backend": "npm start --prefix backend",
+
+    "test:frontend": "npm test --prefix frontend -- --watchAll=false",
+    "test:backend": "npm test --prefix backend"
+  }
+}
