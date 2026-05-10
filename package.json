@@ -18,6 +18,11 @@
     "start:backend": "npm start --prefix backend",
 
     "test:frontend": "npm test --prefix frontend -- --watchAll=false",
-    "test:backend": "npm test --prefix backend"
+    "test:backend": "npm test --prefix backend",
+
+    "lint": "npm run lint --prefix frontend && npm run lint --prefix backend",
+    "lint:fix": "npm run lint:fix --prefix frontend && npm run lint:fix --prefix backend",
+    "format": "npm run format --prefix frontend && npm run format --prefix backend",
+    "format:fix": "npm run format:fix --prefix frontend && npm run format:fix --prefix backend"
   }
 }

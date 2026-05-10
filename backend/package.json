@@ -6,7 +6,11 @@
     "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --check src",
+    "format:fix": "prettier --write src"
   },
   "keywords": [],
   "author": "",
