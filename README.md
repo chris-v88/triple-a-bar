@@ -19,16 +19,16 @@ Create a web application that allows users to browse and search for bartending r
 
 ## Database Entities
 
-### 1. `SpiritCategory` — the type of spirit or liqueur
+### 1. `SpiritCategory` — the type of spirit or cordial
 
 Split into two categories by **type**:
 
 | Type | Examples |
 |---|---|
 | `spirit` (hard liquor) | Vodka, Gin, Rum, Whiskey, Tequila, Brandy |
-| `liqueur` (cordial) | Triple Sec, Amaretto, Kahlúa, Baileys, Grand Marnier |
+| `cordial` | Triple Sec, Amaretto, Kahlúa, Baileys, Grand Marnier |
 
-> **Difference:** Hard liquors are distilled with little to no added sugar (~40%+ ABV). Liqueurs/cordials are sweetened and flavored, typically 15–30% ABV.
+> **Difference:** Hard liquors are distilled with little to no added sugar (~40%+ ABV). Cordials are sweetened and flavored, typically 15–30% ABV.
 
 ### 2. `Brand` — a specific product of a spirit type
 ```
@@ -148,5 +148,5 @@ SpiritCategory.name = "Vodka"
 2. **`spiritCategoryId` on Ingredient is the bridge** — connects "searching for vodka" → "finding cocktails that use vodka".
 3. **`AlternativeName` table** — lets you search "Cosmo" and find Cosmopolitan, "Cape Codder" and find Cape Cod, etc.
 4. **`TastingNote` is separate from `Brand`** — one brand can have many reviews/sources.
-5. **`SpiritCategory.type`** — distinguishes hard liquors (`spirit`) from cordials/liqueurs (`liqueur`), enabling filtered browsing (e.g. "show me only liqueurs" or "what cocktails use cordials").
+5. **`SpiritCategory.type`** — distinguishes hard liquors (`spirit`) from cordials (`cordial`), enabling filtered browsing (e.g. "show me only cordials" or "what cocktails use cordials").
 6. **`Glass` and `Method` as lookup tables** — storing them as separate tables (not plain strings on `Cocktail`) means you can filter "all cocktails served in a rocks glass" or "all stirred cocktails", and update a glass name in one place.
