@@ -1,3 +1,127 @@
+/* ── App layout ─────────────────────────────────────── */
+.app-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* ── Search bar ─────────────────────────────────────── */
+.search-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 44px 12px 16px;
+  font-size: 17px;
+  font-family: var(--sans);
+  color: var(--text-h);
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &::placeholder {
+    color: var(--text);
+    opacity: 0.7;
+  }
+
+  &:focus {
+    border-color: var(--accent);
+  }
+}
+
+.search-spinner {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* ── Empty state ────────────────────────────────────── */
+.search-empty {
+  color: var(--text);
+  font-size: 15px;
+}
+
+/* ── Results list ───────────────────────────────────── */
+.results-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Drink card ─────────────────────────────────────── */
+.drink-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow);
+}
+
+.drink-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.drink-meta {
+  display: flex;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--text);
+  flex-wrap: wrap;
+}
+
+.drink-ingredients {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 15px;
+  color: var(--text);
+
+  ol {
+    margin: 4px 0 0 20px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+.meta-label {
+  font-weight: 600;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ── Existing styles below ──────────────────────────── */
 .counter {
   font-size: 16px;
   padding: 5px 10px;

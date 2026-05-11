@@ -1,0 +1,56 @@
+import { useState, useEffect, useRef } from 'react';
+import type { Drink } from '../types';
+import { searchDrinks } from '../apis/drinks.api';
+import SearchBar from '../components/SearchBar';
+import DrinkCard from '../components/DrinkCard';
+
+const HomePage = () => {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<Drink[]>([]);
+  const [loading, setLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    const trimmed = query.trim();
+    if (!trimmed) return;
+
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const drinks = await searchDrinks(trimmed);
+        setResults(drinks);
+      } catch {
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [query]);
+
+  const displayResults = query.trim() ? results : [];
+
+  return (
+    <div className="app-container">
+      <h1>Triple A Bar</h1>
+
+      <SearchBar value={query} onChange={setQuery} loading={loading} />
+
+      {query.trim() && !loading && displayResults.length === 0 && (
+        <p className="search-empty">No drinks found for "{query.trim()}".</p>
+      )}
+
+      <ul className="results-list">
+        {displayResults.map((drink) => (
+          <DrinkCard key={drink.id} drink={drink} />
+        ))}
+      </ul>
+    </div>
+  );
+};
+export default HomePage;

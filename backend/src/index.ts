@@ -4,7 +4,7 @@ import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
 import cookieParser from 'cookie-parser';
 
-// import rootRouter from './routers/root.router.js';
+import rootRouter from './routers/root.router';
 
 const app = express();
 
@@ -20,6 +20,8 @@ app.use(
 );
 
 // app.use('/api', rootRouter);
+
+app.use('/api', rootRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('Error in middleware:', err);
