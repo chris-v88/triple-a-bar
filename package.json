@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "vercel-build": "npm ci --prefix frontend && npm run build --prefix frontend",
+    "vercel-build": "npm ci --prefix frontend --include=dev && npm run build --prefix frontend",
     "install:all": "npm ci --prefix frontend && npm ci --prefix backend",
 
     "dev": "npm run dev:frontend & npm run dev:backend",
