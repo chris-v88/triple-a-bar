@@ -27,8 +27,6 @@ app.use(
   }),
 );
 
-// app.use('/api', rootRouter);
-
 app.use('/api', rootRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
@@ -39,9 +37,11 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-const port = Number(process.env.PORT) || 3069;
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+if (!process.env.VERCEL) {
+  const port = Number(process.env.PORT) || 3069;
+  app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+  });
+}
 
 export default app;
