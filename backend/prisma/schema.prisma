@@ -10,82 +10,98 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model SpiritCategory {
   id      Int      @id @default(autoincrement())
   name    String   @unique
   bottles Bottle[]
+
+  @@map("SpiritCategories")
 }
 
 model Glass {
   id     Int     @id @default(autoincrement())
   name   String  @unique
   drinks Drink[]
+
+  @@map("Glass")
 }
 
 model TasteNote {
   id     Int              @id @default(autoincrement())
   name   String           @unique @db.VarChar(100)
   drinks DrinkTasteNote[]
+
+  @@map("TasteNotes")
 }
 
 model Brand {
   id      Int      @id @default(autoincrement())
   name    String   @unique
   bottles Bottle[]
+
+  @@map("Brands")
 }
 
 model Bottle {
   id          Int            @id @default(autoincrement())
-  brandId     Int
-  categoryId  Int
+  brandId     Int            @map("brand_id")
+  categoryId  Int            @map("category_id")
   name        String
   abv         Decimal?       @db.Decimal(5, 2)
   proof       Decimal?       @db.Decimal(5, 2)
   brand       Brand          @relation(fields: [brandId], references: [id])
   category    SpiritCategory @relation(fields: [categoryId], references: [id])
   ingredients Ingredient[]
+
+  @@map("Bottles")
 }
 
 model Ingredient {
   id       Int               @id @default(autoincrement())
   name     String            @unique
-  bottleId Int?
+  bottleId Int?              @map("bottle_id")
   bottle   Bottle?           @relation(fields: [bottleId], references: [id])
   drinks   DrinkIngredient[]
+
+  @@map("Ingredients")
 }
 
 model Drink {
   id          Int               @id @default(autoincrement())
   name        String
-  glassId     Int
+  glassId     Int               @map("glass_id")
   method      String
   garnish     String?
   glass       Glass             @relation(fields: [glassId], references: [id])
   ingredients DrinkIngredient[]
   tasteNotes  DrinkTasteNote[]
+
+  @@map("Drinks")
 }
 
 model DrinkIngredient {
   id           Int        @id @default(autoincrement())
-  drinkId      Int
-  ingredientId Int
+  drinkId      Int        @map("drink_id")
+  ingredientId Int        @map("ingredient_id")
   quantity     Decimal?   @db.Decimal(6, 2)
   unit         String?    @db.VarChar(50)
   note         String?    @db.VarChar(255)
-  sortOrder    Int        @default(0)
+  sortOrder    Int        @default(0) @map("sort_order")
   drink        Drink      @relation(fields: [drinkId], references: [id])
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@map("DrinkIngredients")
 }
 
 model DrinkTasteNote {
-  drinkId     Int
-  tasteNoteId Int
+  drinkId     Int       @map("drink_id")
+  tasteNoteId Int       @map("taste_note_id")
   source      String?
   drink       Drink     @relation(fields: [drinkId], references: [id])
   tasteNote   TasteNote @relation(fields: [tasteNoteId], references: [id])
 
   @@id([drinkId, tasteNoteId])
+  @@map("DrinkTasteNotes")
 }
