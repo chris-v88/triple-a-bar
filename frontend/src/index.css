@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -74,6 +76,7 @@ h2 {
 }
 
 h1 {
+  font-family: 'Supermercado One', var(--heading);
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;

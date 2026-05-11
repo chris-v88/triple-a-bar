@@ -37,7 +37,11 @@ const HomePage = () => {
 
   return (
     <div className="app-container">
-      <h1>Triple A Bar</h1>
+
+      <div className="flex flex-row items-center gap-4">
+        <img src='/bartender_icon.png' alt='Bartender Icon' width={60} className='hidden md:block'/>
+        <h1 className="m-0">Triple A Bar</h1>
+      </div>
 
       <SearchBar value={query} onChange={setQuery} loading={loading} />
 
