@@ -49,16 +49,18 @@ const HomePage = () => {
         <h1 className="m-0">Triple A Bar</h1>
       </div>
 
-      <TabSection
-        tabs={[
-          { id: 'drink', label: 'Drink' },
-          { id: 'type', label: 'Type' },
-        ]}
-        currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
-      />
-      <div>
-        <SearchBar value={query} onChange={setQuery} loading={loading} />
+      <div className="mx-auto mt-6 mb-8 w-full max-w-xl border border-gray-300 rounded-2xl shadow-md px-6 py-4 flex flex-col items-center">
+        <TabSection
+          tabs={[
+            { id: 'drink', label: 'Drink' },
+            { id: 'type', label: 'Type' },
+          ]}
+          currentTab={currentTab}
+          setCurrentTab={setCurrentTab}
+        />
+        <div className="w-full max-w-md mt-2">
+          <SearchBar value={query} onChange={setQuery} loading={loading} />
+        </div>
       </div>
 
       {query.trim() && !loading && displayResults.length === 0 && (

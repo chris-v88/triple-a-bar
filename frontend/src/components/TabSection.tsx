@@ -13,7 +13,7 @@ const TabSection = (props: TabSectionProps) => {
   const { tabs, currentTab, setCurrentTab } = props;
 
   return (
-    <div className="flex space-x-2 mb-4">
+    <div className="flex space-x-2 mb-4 border border-gray-300 rounded-t-md">
       {tabs.map((t) => (
         <button
           key={t.id}
@@ -22,7 +22,7 @@ const TabSection = (props: TabSectionProps) => {
         ${
           currentTab === t.id
             ? 'bg-accent text-white shadow'
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-500'
         }`}
           type="button"
         >
