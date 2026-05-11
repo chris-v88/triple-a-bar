@@ -39,7 +39,7 @@ const HomePage = () => {
     <div className="app-container">
 
       <div className="flex flex-row items-center gap-4">
-        <img src='/bartender_icon.png' alt='Bartender Icon' width={60} className='hidden md:block'/>
+        <img src='/bartender_icon.png' alt='Bartender Icon' width={60} className="hidden md:block" />
         <h1 className="m-0">Triple A Bar</h1>
       </div>
 
