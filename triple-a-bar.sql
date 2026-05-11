@@ -109,9 +109,14 @@ INSERT INTO "SpiritCategories" ("name") VALUES
 ('Gin'),       -- 5
 ('Brandy'),    -- 6
 ('Liqueur'),   -- 7
-('Schnapps'),  -- 8
-('Scotch'),    -- 9
-('Beer/Malt'); -- 10
+('Schnapps'),          -- 8
+('Scotch'),            -- 9
+('Beer/Malt'),         -- 10
+('Bourbon'),           -- 11
+('American Whiskey'),  -- 12
+('Irish Whiskey'),     -- 13
+('Canadian Whiskey'),  -- 14
+('Cognac');            -- 15
 
 INSERT INTO "Glass" ("name") VALUES
 ('Highball'),           -- 1
@@ -183,8 +188,68 @@ INSERT INTO "Brands" ("name") VALUES
 ('Smirnoff'),           -- 25  (Vodka)
 ('Olmeca'),             -- 26  (Gold Tequila)
 ('E&J'),                -- 27  (Brandy)
-('Ketel One'),          -- 28  (Vodka - Vanilla)
-('Prosecco House');     -- 29
+('Ketel One'),             -- 28  (Vodka - Vanilla)
+('Prosecco House'),        -- 29
+-- Vodka
+('Tito''s Handmade Vodka'),-- 30
+('Belvedere'),             -- 31
+('Three Olives'),          -- 32
+('Finlandia'),             -- 33
+('Grey Goose'),            -- 34
+('Skyy'),                  -- 35
+('Stolichnaya'),           -- 36
+('Cîroc'),                 -- 37
+-- Bourbon
+('Heaven Hill'),           -- 38
+('Jim Beam'),              -- 39
+('Knob Creek'),            -- 40
+('Old Grand-Dad'),         -- 41
+('Pappy Van Winkle'),      -- 42
+('Wild Turkey'),           -- 43
+-- Gin
+('Beefeater'),             -- 44
+('Bombay'),                -- 45
+('Tanqueray'),             -- 46
+('Gordon''s'),             -- 47
+-- Scotch
+('Chivas Regal'),          -- 48
+('Cutty Sark'),            -- 49
+('Dewar''s'),              -- 50
+('Glenfiddich'),           -- 51
+('Glenlivet'),             -- 52
+('Glenmorangie'),          -- 53
+('J & B'),                 -- 54
+('Johnnie Walker'),        -- 55
+('Macallan'),              -- 56
+-- Brandy
+('Christian Brothers'),    -- 57
+('Coronet'),               -- 58
+('Paul Masson'),           -- 59
+('Metaxa'),                -- 60
+-- Rum
+('Appleton Estate'),       -- 61
+('Cruzan'),                -- 62
+('Mount Gay'),             -- 63
+-- Irish Whiskey
+('Jameson'),               -- 64
+('Bushmills'),             -- 65
+('Tullamore Dew'),         -- 66
+-- Cognac
+('Courvoisier'),           -- 67
+('D''Ussé'),               -- 68
+('Hennessy'),              -- 69
+('Martell'),               -- 70
+('Rémy Martin'),           -- 71
+-- Tequila
+('Cabo Wabo'),             -- 72
+('Casamigos'),             -- 73
+('Don Julio'),             -- 74
+('1800 Tequila'),          -- 75
+('Patrón'),                -- 76
+('Sauza'),                 -- 77
+-- Canadian Whiskey
+('Canadian Club'),         -- 78
+('Windsor');               -- 79
 
 -- =====================================================================
 -- BOTTLES
@@ -192,11 +257,11 @@ INSERT INTO "Brands" ("name") VALUES
 -- category_id: 1=Whiskey,2=Vodka,3=Rum,4=Tequila,5=Gin,6=Brandy,7=Liqueur,8=Schnapps,9=Scotch,10=Beer/Malt
 
 INSERT INTO "Bottles" ("brand_id", "category_id", "name", "abv", "proof") VALUES
--- Whiskey / Scotch
-(1,  1, 'Maker''s Mark Bourbon',           45.00,  90.00),  -- 1
-(6,  1, 'Seagram''s 7 Crown Whiskey',      40.00,  80.00),  -- 2
-(13, 1, 'Crown Royal Canadian Whisky',     40.00,  80.00),  -- 3
-(18, 1, 'Jack Daniel''s Old No.7',         40.00,  80.00),  -- 4
+-- Whiskey variants (Bourbon / American / Canadian / Scotch)
+(1,  11, 'Maker''s Mark Bourbon',          45.00,  90.00),  -- 1
+(6,  12, 'Seagram''s 7 Crown Whiskey',     40.00,  80.00),  -- 2
+(13, 14, 'Crown Royal Canadian Whisky',    40.00,  80.00),  -- 3
+(18, 12, 'Jack Daniel''s Old No.7',        40.00,  80.00),  -- 4
 (9,  9, 'Laphroaig 10yr Scotch',           40.00,  80.00),  -- 5  (using Baileys slot -- fix: Scotch brand needed; generic stand-in)
 -- Vodka
 (24, 2, 'Absolut Vodka',                   40.00,  80.00),  -- 6
@@ -238,7 +303,77 @@ INSERT INTO "Bottles" ("brand_id", "category_id", "name", "abv", "proof") VALUES
 (20, 7, 'Noilly Prat Dry Vermouth',        18.00,  36.00),  -- 35
 (21, 7, 'Martini & Rossi Sweet Vermouth',  15.00,  30.00),  -- 36
 -- Prosecco
-(29, 7, 'Prosecco',                         11.00,  22.00); -- 37
+(29, 7, 'Prosecco',                              11.00,  22.00),  -- 37
+-- =====================================================================
+-- EXPANDED BOTTLE CATALOG
+-- =====================================================================
+-- Vodka (category_id = 2)
+(30, 2,  'Tito''s Handmade Vodka',               40.00,  80.00),  -- 38
+(31, 2,  'Belvedere Vodka',                       40.00,  80.00),  -- 39
+(32, 2,  'Three Olives Vodka',                    40.00,  80.00),  -- 40
+(33, 2,  'Finlandia Vodka',                       40.00,  80.00),  -- 41
+(34, 2,  'Grey Goose Vodka',                      40.00,  80.00),  -- 42
+(35, 2,  'Skyy Vodka',                            40.00,  80.00),  -- 43
+(36, 2,  'Stolichnaya Vodka',                     40.00,  80.00),  -- 44
+(37, 2,  'Cîroc Vodka',                           40.00,  80.00),  -- 45
+-- Bourbon (category_id = 11)
+(38, 11, 'Heaven Hill Kentucky Straight Bourbon', 40.00,  80.00),  -- 46
+(39, 11, 'Jim Beam White Bourbon',                40.00,  80.00),  -- 47
+(40, 11, 'Knob Creek Kentucky Straight Bourbon',  50.00, 100.00),  -- 48
+(41, 11, 'Old Grand-Dad Bourbon',                 43.00,  86.00),  -- 49
+(42, 11, 'Pappy Van Winkle''s Family Reserve 15yr',53.50,107.00),  -- 50
+(43, 11, 'Wild Turkey 101 Bourbon',               50.50, 101.00),  -- 51
+-- American Whiskey (category_id = 12)
+(18, 12, 'Gentleman Jack Tennessee Whiskey',      40.00,  80.00),  -- 52
+-- Gin (category_id = 5)
+(44, 5,  'Beefeater London Dry Gin',              40.00,  80.00),  -- 53
+(45, 5,  'Bombay Sapphire Gin',                   47.00,  94.00),  -- 54
+(46, 5,  'Tanqueray London Dry Gin',              47.30,  94.60),  -- 55
+(47, 5,  'Gordon''s London Dry Gin',              37.50,  75.00),  -- 56
+-- Scotch (category_id = 9)
+(48, 9,  'Chivas Regal 12yr Blended Scotch',      40.00,  80.00),  -- 57
+(49, 9,  'Cutty Sark Blended Scotch',             40.00,  80.00),  -- 58
+(50, 9,  'Dewar''s White Label Scotch',           40.00,  80.00),  -- 59
+(51, 9,  'Glenfiddich 12yr Single Malt',          40.00,  80.00),  -- 60
+(52, 9,  'Glenlivet 12yr Single Malt',            40.00,  80.00),  -- 61
+(53, 9,  'Glenmorangie 10yr Single Malt',         40.00,  80.00),  -- 62
+(54, 9,  'J & B Rare Scotch',                     40.00,  80.00),  -- 63
+(55, 9,  'Johnnie Walker Red Label',              40.00,  80.00),  -- 64
+(55, 9,  'Johnnie Walker Black Label',            40.00,  80.00),  -- 65
+(55, 9,  'Johnnie Walker Gold Label Reserve',     40.00,  80.00),  -- 66
+(55, 9,  'Johnnie Walker Blue Label',             43.80,  87.60),  -- 67
+(56, 9,  'Macallan 12yr Single Malt',             40.00,  80.00),  -- 68
+-- Brandy (category_id = 6)
+(57, 6,  'Christian Brothers VS Brandy',          40.00,  80.00),  -- 69
+(58, 6,  'Coronet VSQ Brandy',                    40.00,  80.00),  -- 70
+(59, 6,  'Paul Masson Grande Amber VS',           40.00,  80.00),  -- 71
+(60, 6,  'Metaxa 5 Star Brandy',                  38.00,  76.00),  -- 72
+-- Rum (category_id = 3)
+(61, 3,  'Appleton Estate Signature Rum',         40.00,  80.00),  -- 73
+(62, 3,  'Cruzan Estate Light Rum',               40.00,  80.00),  -- 74
+(63, 3,  'Mount Gay Eclipse Rum',                 40.00,  80.00),  -- 75
+-- Irish Whiskey (category_id = 13)
+(64, 13, 'Jameson Irish Whiskey',                 40.00,  80.00),  -- 76
+(65, 13, 'Bushmills Original Irish Whiskey',      40.00,  80.00),  -- 77
+(66, 13, 'Tullamore Dew Irish Whiskey',           40.00,  80.00),  -- 78
+-- Cognac (category_id = 15)
+(67, 15, 'Courvoisier VS Cognac',                 40.00,  80.00),  -- 79
+(68, 15, 'D''Ussé VSOP Cognac',                   43.00,  86.00),  -- 80
+(69, 15, 'Hennessy VS Cognac',                    40.00,  80.00),  -- 81
+(70, 15, 'Martell VS Cognac',                     40.00,  80.00),  -- 82
+(71, 15, 'Rémy Martin VSOP Cognac',               40.00,  80.00),  -- 83
+-- Tequila (category_id = 4)
+(3,  4,  'Jose Cuervo Especial Gold Tequila',     40.00,  80.00),  -- 84
+(72, 4,  'Cabo Wabo Blanco Tequila',              40.00,  80.00),  -- 85
+(73, 4,  'Casamigos Blanco Tequila',              40.00,  80.00),  -- 86
+(74, 4,  'Don Julio Blanco Tequila',              40.00,  80.00),  -- 87
+(75, 4,  '1800 Silver Tequila',                   40.00,  80.00),  -- 88
+(76, 4,  'Patrón Silver Tequila',                 40.00,  80.00),  -- 89
+(77, 4,  'Sauza Silver Tequila',                  40.00,  80.00),  -- 90
+-- Canadian Whiskey (category_id = 14)
+(78, 14, 'Canadian Club Classic Whisky',          40.00,  80.00),  -- 91
+(6,  14, 'Seagram''s V.O. Canadian Whisky',       40.00,  80.00),  -- 92
+(79, 14, 'Windsor Canadian Whisky',               40.00,  80.00);  -- 93
 
 -- =====================================================================
 -- INGREDIENTS
