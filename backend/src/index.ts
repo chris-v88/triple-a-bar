@@ -12,9 +12,17 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(cookieParser());
 
+const allowedOrigins = [
+  process.env.CLIENT_URL ?? 'http://localhost:3000',
+  'https://triple-a-bar.vercel.app',
+];
+
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL ?? 'http://localhost:3000'],
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) callback(null, true);
+      else callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
   }),
 );
