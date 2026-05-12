@@ -14,12 +14,13 @@ DROP TABLE IF EXISTS "Ingredients"      CASCADE;
 DROP TABLE IF EXISTS "TasteNotes"       CASCADE;
 DROP TABLE IF EXISTS "Glass"            CASCADE;
 DROP TABLE IF EXISTS "SpiritCategories" CASCADE;
+DROP TABLE IF EXISTS "SpiritTypes"      CASCADE;
 
 -- =====================================================================
 -- REFERENCE TABLES
 -- =====================================================================
 
-CREATE TABLE "SpiritCategories" (
+CREATE TABLE "SpiritTypes" (
     "id"   SERIAL PRIMARY KEY,
     "name" VARCHAR(255) NOT NULL UNIQUE
 );
@@ -48,7 +49,7 @@ CREATE TABLE "Brands" (
 CREATE TABLE "Bottles" (
     "id"          SERIAL PRIMARY KEY,
     "brand_id"    INT NOT NULL REFERENCES "Brands"("id"),
-    "category_id" INT NOT NULL REFERENCES "SpiritCategories"("id"),
+    "category_id" INT NOT NULL REFERENCES "SpiritTypes"("id"),
     "name"        VARCHAR(255) NOT NULL,
     "abv"         DECIMAL(5,2),
     "proof"       DECIMAL(5,2)
@@ -101,7 +102,7 @@ CREATE TABLE "DrinkTasteNotes" (
 -- REFERENCE DATA
 -- =====================================================================
 
-INSERT INTO "SpiritCategories" ("name") VALUES
+INSERT INTO "SpiritTypes" ("name") VALUES
 ('Whiskey'),   -- 1
 ('Vodka'),     -- 2
 ('Rum'),       -- 3
@@ -116,7 +117,8 @@ INSERT INTO "SpiritCategories" ("name") VALUES
 ('American Whiskey'),  -- 12
 ('Irish Whiskey'),     -- 13
 ('Canadian Whiskey'),  -- 14
-('Cognac');            -- 15
+('Cognac'),            -- 15
+('Sparkling Wine');    -- 16
 
 INSERT INTO "Glass" ("name") VALUES
 ('Highball'),           -- 1
@@ -249,7 +251,14 @@ INSERT INTO "Brands" ("name") VALUES
 ('Sauza'),                 -- 77
 -- Canadian Whiskey
 ('Canadian Club'),         -- 78
-('Windsor');               -- 79
+('Windsor'),               -- 79
+-- New specialty brands
+('Blackhaus'),             -- 80
+('Fireball'),              -- 81
+('RumChata'),              -- 82
+('Jägermeister'),          -- 83
+('Aperol'),                -- 84
+('Moët & Chandon');        -- 85
 
 -- =====================================================================
 -- BOTTLES
@@ -303,7 +312,7 @@ INSERT INTO "Bottles" ("brand_id", "category_id", "name", "abv", "proof") VALUES
 (20, 7, 'Noilly Prat Dry Vermouth',        18.00,  36.00),  -- 35
 (21, 7, 'Martini & Rossi Sweet Vermouth',  15.00,  30.00),  -- 36
 -- Prosecco
-(29, 7, 'Prosecco',                              11.00,  22.00),  -- 37
+(29, 16, 'Prosecco',                             11.00,  22.00),  -- 37
 -- =====================================================================
 -- EXPANDED BOTTLE CATALOG
 -- =====================================================================
@@ -373,7 +382,20 @@ INSERT INTO "Bottles" ("brand_id", "category_id", "name", "abv", "proof") VALUES
 -- Canadian Whiskey (category_id = 14)
 (78, 14, 'Canadian Club Classic Whisky',          40.00,  80.00),  -- 91
 (6,  14, 'Seagram''s V.O. Canadian Whisky',       40.00,  80.00),  -- 92
-(79, 14, 'Windsor Canadian Whisky',               40.00,  80.00);  -- 93
+(79, 14, 'Windsor Canadian Whisky',               40.00,  80.00),  -- 93
+-- Specialty Liqueurs / Schnapps for new drinks
+(80, 8,  'Blackhaus Blackberry Schnapps',         15.00,  30.00),  -- 94
+(81, 7,  'Fireball Cinnamon Whisky',              33.00,  66.00),  -- 95
+(82, 7,  'RumChata Cream Liqueur',                13.75,  27.50),  -- 96
+(83, 7,  'J\u00e4germeister Herbal Liqueur',          35.00,  70.00),  -- 97
+(84, 7,  'Aperol Aperitivo',                      11.00,  22.00),  -- 98
+(14, 7,  'DeKuyper Green Cr\u00e8me de Menthe',        24.00,  48.00),  -- 99
+(14, 7,  'DeKuyper White Cr\u00e8me de Cacao',         24.00,  48.00),  -- 100
+-- Champagne
+(85, 16, 'Mo\u00ebt & Chandon Brut Imp\u00e9rial',         12.00,  24.00),  -- 101
+-- Flavored Vodkas (Three Olives)
+(32, 2,  'Three Olives Grape Vodka',              35.00,  70.00),  -- 102
+(32, 2,  'Three Olives Cherry Vodka',             35.00,  70.00);  -- 103
 
 -- =====================================================================
 -- INGREDIENTS
@@ -454,6 +476,22 @@ INSERT INTO "Ingredients" ("name", "bottle_id") VALUES
 ('Cherry',                 NULL),  -- 67
 ('Cocktail Onion',         NULL),  -- 68
 ('Soda Water',             NULL);  -- 69
+
+-- New spirit / liqueur ingredients
+('Grape Vodka',            102),  -- 70 → Three Olives Grape
+('Jameson',                76),   -- 71 → Jameson Irish Whiskey
+('Green Crème de Menthe',  99),   -- 72 → DeKuyper Green
+('White Crème de Cacao',   100),  -- 73 → DeKuyper White
+('Blackhaus',              94),   -- 74 → Blackhaus Blackberry Schnapps
+('Fireball',               95),   -- 75 → Fireball Cinnamon Whisky
+('RumChata',               96),   -- 76 → RumChata Cream Liqueur
+('Jägermeister',           97),   -- 77 → Jägermeister
+('Cherry Vodka',           103),  -- 78 → Three Olives Cherry
+-- New mixers / modifiers
+('Pickle Juice',           NULL), -- 79
+('Aperol',                 98),   -- 80 → Aperol Aperitivo
+('Champagne',              101),  -- 81 → Moët & Chandon
+('Whipped Cream',          NULL); -- 82
 
 -- =====================================================================
 -- DRINKS
@@ -543,7 +581,37 @@ INSERT INTO "Drinks" ("name", "glass_id", "method", "garnish") VALUES
 ('Godfather',             2, 'On Ice',                                    NULL),                           -- 75
 ('Godmother',             2, 'On Ice',                                    NULL),                           -- 76
 ('Negroni',               2, 'On Ice',                                    'Orange Twist'),                 -- 77
-('Negroni Sbagliato',     2, 'On Ice',                                    'Orange Twist');                 -- 78
+('Negroni Sbagliato',     2, 'On Ice',                                    'Orange Twist'),                -- 78
+-- BRANDY SNIFTER
+('Snifter Drink',         13,'Straight/Neat',                             NULL),                           -- 79
+-- SHOT GLASS
+('Blow Job',              14,'Layer in the order listed',                 'Whipped Cream'),                 -- 80
+-- ROCKS — SHAKE & STRAIN SHOTS/COCKTAILS
+('Kamikaze',              2, 'Shake & Strain',                            'Lime'),                          -- 81
+('Grape Gatorade',        2, 'Shake & Strain',                            NULL),                            -- 82
+('Green Tea',             2, 'Shake & Strain',                            NULL),                            -- 83
+('White Tea',             2, 'Shake & Strain',                            NULL),                            -- 84
+('Lemon Drop',            2, 'Shake & Strain',                            'Sugar & Lemon'),                 -- 85
+('Jolly Rancher',         2, 'Shake & Strain',                            NULL),                            -- 86
+('Swedish Fish',          2, 'Shake & Strain',                            NULL),                            -- 87
+('Cinnamon Toast Crunch', 2, 'Shake & Strain',                            NULL),                            -- 88
+-- ROCKS — BOMB SHOTS
+('Skittle Bomb',          2, 'Guest drops shot into Red Bull',            NULL),                            -- 89
+('Jager Bomb',            2, 'Guest drops shot into Red Bull',            NULL),                            -- 90
+('Cherry Bomb',           2, 'Guest drops shot into Red Bull',            NULL),                            -- 91
+-- ROCKS — MORE SHAKE & STRAIN
+('Dirty Girl Scout',      2, 'Shake & Strain',                            NULL),                            -- 92
+('White Gummy Bear',      2, 'Shake & Strain',                            NULL),                            -- 93
+-- ROCKS — STRAIGHT/NEAT
+('Pickle Back',           2, 'Straight/Neat',                             NULL),                            -- 94
+-- COCKTAIL GLASS
+('Grasshopper',           10,'Shake & Strain / Blend',                   NULL),                            -- 95
+('Brandy Alexander',      10,'Shake & Strain / Blend',                   NULL),                            -- 96
+('Mudslide',              10,'Shake & Strain / Blend',                   'Chocolate Drizzle'),             -- 97
+-- WINE GLASS
+('Aperol Spritz',         17,'On Ice',                                    'Orange'),                        -- 98
+-- CHAMPAGNE TULIP
+('Mimosa',                7, 'Build',                                     'Orange');                        -- 99
 
 -- =====================================================================
 -- DRINK INGREDIENTS
@@ -870,7 +938,89 @@ INSERT INTO "DrinkIngredients" ("drink_id", "ingredient_id", "quantity", "unit",
 -- 78 Negroni Sbagliato
 (78, 23, 0.50, 'oz',  NULL,   1),  -- Campari
 (78, 36, 0.50, 'oz',  NULL,   2),  -- Sweet Vermouth
-(78, 37, NULL, NULL,  'top',  3);  -- Prosecco
+(78, 37, NULL, NULL,  'top',  3),  -- Prosecco
+-- 79 Snifter Drink
+(79, 10, 1.50, 'oz',  'any Brandy, Cognac, or Cordial/Liqueur', 1),
+-- 80 Blow Job
+(80, 17, 0.50, 'oz',  NULL,   1),  -- Kahlúa
+(80, 18, 0.50, 'oz',  NULL,   2),  -- Baileys Irish Cream
+-- 81 Kamikaze
+(81, 1,  0.50, 'oz',  NULL,   1),  -- Vodka
+(81, 26, 0.50, 'oz',  NULL,   2),  -- Triple Sec
+(81, 52, 0.50, 'oz',  NULL,   3),  -- Lime Syrup
+-- 82 Grape Gatorade
+(82, 70, 0.50, 'oz',  NULL,      1),  -- Grape Vodka
+(82, 20, 0.50, 'oz',  NULL,      2),  -- Chambord
+(82, 50, NULL, NULL,  'splash',  3),  -- Sour Mix
+(82, 44, NULL, NULL,  'splash',  4),  -- 7-Up
+-- 83 Green Tea
+(83, 71, 0.50, 'oz',  NULL,      1),  -- Jameson
+(83, 34, 0.50, 'oz',  NULL,      2),  -- Peach Schnapps
+(83, 50, NULL, NULL,  'splash',  3),  -- Sour Mix
+(83, 64, NULL, NULL,  'splash',  4),  -- Sprite
+-- 84 White Tea
+(84, 1,  0.50, 'oz',  NULL,      1),  -- Vodka
+(84, 34, 0.50, 'oz',  NULL,      2),  -- Peach Schnapps
+(84, 50, NULL, NULL,  'splash',  3),  -- Sour Mix
+(84, 64, NULL, NULL,  'splash',  4),  -- Sprite
+-- 85 Lemon Drop
+(85, 1,  0.50, 'oz',  NULL,      1),  -- Vodka
+(85, 26, 0.50, 'oz',  NULL,      2),  -- Triple Sec
+(85, 50, NULL, NULL,  'splash',  3),  -- Sour Mix
+-- 86 Jolly Rancher
+(86, 19, 0.50, 'oz',  NULL,      1),  -- Midori
+(86, 34, 0.50, 'oz',  NULL,      2),  -- Peach Schnapps
+(86, 45, NULL, NULL,  'splash',  3),  -- Cranberry Juice
+-- 87 Swedish Fish
+(87, 74, 1.00, 'oz',  NULL,      1),  -- Blackhaus
+(87, 45, NULL, NULL,  'splash',  2),  -- Cranberry Juice
+(87, 64, NULL, NULL,  'splash',  3),  -- Sprite
+-- 88 Cinnamon Toast Crunch
+(88, 75, 1.00, 'oz',  NULL,   1),  -- Fireball
+(88, 76, 1.00, 'oz',  NULL,   2),  -- RumChata
+-- 89 Skittle Bomb
+(89, 41, NULL, NULL,  'half pint', 1),  -- Red Bull
+(89, 12, NULL, NULL,  'in shot glass', 2),  -- Orange Vodka
+(89, 78, NULL, NULL,  'in shot glass', 3),  -- Cherry Vodka
+(89, 70, NULL, NULL,  'in shot glass', 4),  -- Grape Vodka
+-- 90 Jager Bomb
+(90, 41, NULL, NULL,  'half pint',     1),  -- Red Bull
+(90, 77, 1.00, 'oz',  'in shot glass', 2),  -- Jägermeister
+-- 91 Cherry Bomb
+(91, 41, NULL, NULL,  'half pint',     1),  -- Red Bull
+(91, 78, NULL, NULL,  'in shot glass', 2),  -- Cherry Vodka
+(91, 53, NULL, NULL,  'splash in shot glass', 3),  -- Grenadine
+-- 92 Dirty Girl Scout
+(92, 1,  0.50, 'oz',  NULL,   1),  -- Vodka
+(92, 72, 0.50, 'oz',  NULL,   2),  -- Green Crème de Menthe
+(92, 18, 0.50, 'oz',  NULL,   3),  -- Baileys
+-- 93 White Gummy Bear
+(93, 78, 0.50, 'oz',  NULL,      1),  -- Cherry Vodka
+(93, 34, 0.50, 'oz',  NULL,      2),  -- Peach Schnapps
+(93, 50, NULL, NULL,  'splash',  3),  -- Sour Mix
+(93, 64, NULL, NULL,  'splash',  4),  -- Sprite
+-- 94 Pickle Back
+(94, 71, 1.00, 'oz',  NULL,   1),  -- Jameson
+(94, 79, 1.00, 'oz',  NULL,   2),  -- Pickle Juice
+-- 95 Grasshopper
+(95, 72, 0.50, 'oz',  NULL,   1),  -- Green Crème de Menthe
+(95, 73, 0.50, 'oz',  NULL,   2),  -- White Crème de Cacao
+(95, 56, NULL, NULL,  'fill', 3),  -- Cream
+-- 96 Brandy Alexander
+(96, 10, 0.50, 'oz',  NULL,   1),  -- Brandy
+(96, 33, 0.50, 'oz',  NULL,   2),  -- Brown Crème de Cacao
+(96, 56, NULL, NULL,  'fill', 3),  -- Cream
+-- 97 Mudslide
+(97, 1,  1.00, 'oz',  NULL,   1),  -- Vodka
+(97, 17, 0.50, 'oz',  NULL,   2),  -- Kahlúa
+(97, 18, 0.50, 'oz',  NULL,   3),  -- Baileys
+-- 98 Aperol Spritz
+(98, 80, 1.00, 'oz',  NULL,   1),  -- Aperol
+(98, 37, 3.00, 'oz',  NULL,   2),  -- Prosecco
+(98, 54, NULL, NULL,  'top',  3),  -- Club Soda
+-- 99 Mimosa
+(99, 81, NULL, NULL,  '3/4 fill', 1),  -- Champagne
+(99, 48, NULL, NULL,  'fill',     2);  -- Orange Juice
 
 -- =====================================================================
 -- TASTE NOTES (sourced from Difford's Guide & Liquor.com)
