@@ -33,42 +33,57 @@ const SearchResult = ({ tab, query, loading, drinks, bottles }: Props) => {
     if (bottles.length === 0) {
       return <p className="search-empty">No bottles found for "{trimmed}".</p>;
     }
-    const category = bottles[0].category;
+
+    // Group bottles by category
+    const groups = bottles.reduce<Map<string, { category: Bottle['category']; items: Bottle[] }>>(
+      (acc, bottle) => {
+        const key = bottle.category.name;
+        if (!acc.has(key)) acc.set(key, { category: bottle.category, items: [] });
+        acc.get(key)!.items.push(bottle);
+        return acc;
+      },
+      new Map(),
+    );
+
     return (
       <div>
-        <div className="drink-card" style={{ marginBottom: '1rem' }}>
-          <h2 className="drink-name">about {category.name.toLowerCase()}</h2>
-          {category.description && (
-            <p style={{ marginTop: '0.5rem', lineHeight: '1.6' }}>{category.description}</p>
-          )}
-        </div>
-        <ul className="results-list">
-        {bottles.map((bottle) => (
-          <li key={bottle.id} className="drink-card">
-            <h2 className="drink-name">{bottle.name}</h2>
-            <div className="drink-meta">
-              <span className="meta-label">Brand</span>
-              <span>{bottle.brand.name}</span>
+        {[...groups.values()].map(({ category, items }) => (
+          <div className='mt-4' key={category.name}>
+            <div className="drink-card" style={{ marginBottom: '1rem' }}>
+              <h2 className="drink-name">about "{category.name.toLowerCase()}"</h2>
+              {category.description && (
+                <p style={{ marginTop: '0.5rem', lineHeight: '1.6' }}>{category.description}</p>
+              )}
             </div>
-            <div className="drink-meta">
-              <span className="meta-label">Type</span>
-              <span>{bottle.category.name}</span>
-            </div>
-            {bottle.abv && (
-              <div className="drink-meta">
-                <span className="meta-label">ABV</span>
-                <span>{bottle.abv}%</span>
-              </div>
-            )}
-            {bottle.proof && (
-              <div className="drink-meta">
-                <span className="meta-label">Proof</span>
-                <span>{bottle.proof}</span>
-              </div>
-            )}
-          </li>
+            <ul className="results-list">
+              {items.map((bottle) => (
+                <li key={bottle.id} className="drink-card">
+                  <h2 className="drink-name">{bottle.name}</h2>
+                  <div className="drink-meta">
+                    <span className="meta-label">Brand</span>
+                    <span>{bottle.brand.name}</span>
+                  </div>
+                  <div className="drink-meta">
+                    <span className="meta-label">Type</span>
+                    <span>{bottle.category.name}</span>
+                  </div>
+                  {bottle.abv && (
+                    <div className="drink-meta">
+                      <span className="meta-label">ABV</span>
+                      <span>{bottle.abv}%</span>
+                    </div>
+                  )}
+                  {bottle.proof && (
+                    <div className="drink-meta">
+                      <span className="meta-label">Proof</span>
+                      <span>{bottle.proof}</span>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
-        </ul>
       </div>
     );
   }
