@@ -14,7 +14,7 @@ const HomePage = () => {
   const handleQueryChange = (value: string) => {
     setQuery(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => setDebouncedQuery(value), 300);
+    debounceRef.current = setTimeout(() => setDebouncedQuery(value), 600);
   };
 
   const trimmed = debouncedQuery.trim();
