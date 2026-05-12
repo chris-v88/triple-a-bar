@@ -13,9 +13,10 @@ datasource db {
 }
 
 model SpiritCategory {
-  id      Int      @id @default(autoincrement())
-  name    String   @unique
-  bottles Bottle[]
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  bottles     Bottle[]
 
   @@map("SpiritTypes")
 }
