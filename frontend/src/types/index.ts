@@ -22,5 +22,5 @@ export type Bottle = {
   abv: string | null;
   proof: string | null;
   brand: { name: string };
-  category: { name: string };
+  category: { name: string; description: string | null };
 };

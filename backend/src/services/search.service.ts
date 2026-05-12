@@ -29,7 +29,7 @@ export const searchService = {
       },
       include: {
         brand: { select: { name: true } },
-        category: { select: { name: true } },
+        category: { select: { name: true, description: true } },
       },
       orderBy: [
         { category: { name: 'asc' } },

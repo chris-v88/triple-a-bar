@@ -33,8 +33,16 @@ const SearchResult = ({ tab, query, loading, drinks, bottles }: Props) => {
     if (bottles.length === 0) {
       return <p className="search-empty">No bottles found for "{trimmed}".</p>;
     }
+    const category = bottles[0].category;
     return (
-      <ul className="results-list">
+      <div>
+        <div className="drink-card" style={{ marginBottom: '1rem' }}>
+          <h2 className="drink-name">about {category.name.toLowerCase()}</h2>
+          {category.description && (
+            <p style={{ marginTop: '0.5rem', lineHeight: '1.6' }}>{category.description}</p>
+          )}
+        </div>
+        <ul className="results-list">
         {bottles.map((bottle) => (
           <li key={bottle.id} className="drink-card">
             <h2 className="drink-name">{bottle.name}</h2>
@@ -60,7 +68,8 @@ const SearchResult = ({ tab, query, loading, drinks, bottles }: Props) => {
             )}
           </li>
         ))}
-      </ul>
+        </ul>
+      </div>
     );
   }
 
