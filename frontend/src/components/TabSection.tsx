@@ -20,7 +20,7 @@ const TabSection = (props: TabSectionProps) => {
           onClick={() => setCurrentTab(t.id)}
           className={`px-4 py-2 rounded-t-md font-semibold transition-colors
         ${
-          currentTab === t.id
+          currentTab !== t.id
             ? 'bg-accent text-white shadow'
             : 'bg-gray-100 text-gray-600 hover:bg-gray-500'
         }`}

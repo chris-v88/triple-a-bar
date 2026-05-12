@@ -15,3 +15,12 @@ export type Drink = {
   glass: { name: string };
   ingredients: Ingredient[];
 };
+
+export type Bottle = {
+  id: number;
+  name: string;
+  abv: string | null;
+  proof: string | null;
+  brand: { name: string };
+  category: { name: string };
+};

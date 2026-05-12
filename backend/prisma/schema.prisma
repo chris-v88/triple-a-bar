@@ -17,7 +17,7 @@ model SpiritCategory {
   name    String   @unique
   bottles Bottle[]
 
-  @@map("SpiritCategories")
+  @@map("SpiritTypes")
 }
 
 model Glass {

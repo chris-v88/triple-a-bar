@@ -1,41 +1,37 @@
-import { useState, useEffect, useRef } from 'react';
-import type { Drink } from '../types';
+import { useState, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { searchDrinks } from '../apis/drinks.api';
-import SearchBar from '../components/SearchBar';
-import DrinkCard from '../components/DrinkCard';
-import TabSection from '../components/TabSection';
+import { searchBottles } from '../apis/bottles.api';
+import SearchSection from '../components/SearchSection';
+import SearchResult from '../components/SearchResult';
 
 const HomePage = () => {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Drink[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [currentTab, setCurrentTab] = useState('drink');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
+  const handleQueryChange = (value: string) => {
+    setQuery(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setDebouncedQuery(value), 300);
+  };
 
-    const trimmed = query.trim();
-    if (!trimmed) return;
+  const trimmed = debouncedQuery.trim();
 
-    debounceRef.current = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const drinks = await searchDrinks(trimmed);
-        setResults(drinks);
-      } catch {
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    }, 300);
+  const { data: drinks = [], isFetching: drinksFetching } = useQuery({
+    queryKey: ['drinks', trimmed],
+    queryFn: () => searchDrinks(trimmed),
+    enabled: currentTab === 'drink' && trimmed.length > 0,
+  });
 
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [query]);
+  const { data: bottles = [], isFetching: bottlesFetching } = useQuery({
+    queryKey: ['bottles', trimmed],
+    queryFn: () => searchBottles(trimmed),
+    enabled: currentTab === 'bottle' && trimmed.length > 0,
+  });
 
-  const displayResults = query.trim() ? results : [];
+  const loading = currentTab === 'drink' ? drinksFetching : bottlesFetching;
 
   return (
     <div className="app-container">
@@ -49,29 +45,21 @@ const HomePage = () => {
         <h1 className="m-0">Triple A Bar</h1>
       </div>
 
-      <div className="mx-auto mt-6 mb-8 w-full max-w-xl border border-gray-300 rounded-2xl shadow-md px-6 py-4 flex flex-col items-center">
-        <TabSection
-          tabs={[
-            { id: 'drink', label: 'Drink' },
-            { id: 'type', label: 'Type' },
-          ]}
-          currentTab={currentTab}
-          setCurrentTab={setCurrentTab}
-        />
-        <div className="w-full max-w-md mt-2">
-          <SearchBar value={query} onChange={setQuery} loading={loading} />
-        </div>
-      </div>
+      <SearchSection
+        query={query}
+        onQueryChange={handleQueryChange}
+        loading={loading}
+        currentTab={currentTab}
+        onTabChange={(tab) => { setCurrentTab(tab); setDebouncedQuery(''); setQuery(''); }}
+      />
 
-      {query.trim() && !loading && displayResults.length === 0 && (
-        <p className="search-empty">No drinks found for "{query.trim()}".</p>
-      )}
-
-      <ul className="results-list">
-        {displayResults.map((drink) => (
-          <DrinkCard key={drink.id} drink={drink} />
-        ))}
-      </ul>
+      <SearchResult
+        tab={currentTab}
+        query={debouncedQuery}
+        loading={loading}
+        drinks={drinks}
+        bottles={bottles}
+      />
     </div>
   );
 };

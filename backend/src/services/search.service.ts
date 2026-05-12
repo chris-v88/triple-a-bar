@@ -19,4 +19,23 @@ export const searchService = {
       orderBy: { name: 'asc' },
     });
   },
+
+  searchBottle: async (req: Request) => {
+    const q = String(req.query.q ?? '').trim();
+    if (!q) return [];
+    return prisma.bottle.findMany({
+      where: {
+        category: { name: { contains: q, mode: 'insensitive' } },
+      },
+      include: {
+        brand: { select: { name: true } },
+        category: { select: { name: true } },
+      },
+      orderBy: [
+        { category: { name: 'asc' } },
+        { brand: { name: 'asc' } },
+        { name: 'asc' },
+      ],
+    });
+  },
 };
