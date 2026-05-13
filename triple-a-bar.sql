@@ -1,7 +1,3 @@
--- Run this script connected to the triple_a_bar database.
--- To create the database, run once: CREATE DATABASE triple_a_bar;
--- To connect in psql:               \c triple_a_bar
-
 -- =====================================================================
 -- DROP TABLES (reverse dependency order; CASCADE cleans up FKs)
 -- =====================================================================
