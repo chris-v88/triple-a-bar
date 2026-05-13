@@ -1,6 +1,1 @@
-import axios from 'axios';
-
-export const axiosInstance = axios.create({
-  baseURL: '/api',
-  withCredentials: true,
-});
+// axiosInstance is no longer used; retained for reference only.
