@@ -521,7 +521,7 @@ INSERT INTO "Ingredients" ("name", "bottle_id") VALUES
 ('Orange Slice',           NULL),  -- 66
 ('Cherry',                 NULL),  -- 67
 ('Cocktail Onion',         NULL),  -- 68
-('Soda Water',             NULL);  -- 69
+('Soda Water',             NULL),  -- 69
 
 -- New spirit / liqueur ingredients
 ('Grape Vodka',            102),  -- 70 → Three Olives Grape
