@@ -4,5 +4,6 @@ import { searchController } from '../controllers/search.controller';
 const searchRouter = express.Router();
 
 searchRouter.get('/drink', searchController.searchDrink);
+searchRouter.get('/bottle', searchController.searchBottle);
 
 export default searchRouter;

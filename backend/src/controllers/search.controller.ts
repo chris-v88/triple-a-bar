@@ -12,4 +12,14 @@ export const searchController = {
       next(err);
     }
   },
+
+  searchBottle: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await searchService.searchBottle(req);
+      const response = responseSuccess(result, 'Search bottles successfully');
+      res.status(response.statusCode).json(response);
+    } catch (err) {
+      next(err);
+    }
+  },
 };
