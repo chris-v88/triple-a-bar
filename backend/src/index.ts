@@ -8,6 +8,7 @@ import rootRouter from './routers/root.router';
 
 const app = express();
 
+app.set('etag', false);
 app.use(express.static('public'));
 app.use(express.json());
 app.use(cookieParser());
