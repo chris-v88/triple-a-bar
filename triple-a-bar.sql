@@ -1,4 +1,9 @@
 -- =====================================================================
+-- EXTENSIONS
+-- =====================================================================
+CREATE EXTENSION IF NOT EXISTS unaccent;
+
+-- =====================================================================
 -- DROP TABLES (reverse dependency order; CASCADE cleans up FKs)
 -- =====================================================================
 DROP TABLE IF EXISTS "DrinkTasteNotes"  CASCADE;
@@ -11,15 +16,23 @@ DROP TABLE IF EXISTS "TasteNotes"       CASCADE;
 DROP TABLE IF EXISTS "Glass"            CASCADE;
 DROP TABLE IF EXISTS "SpiritCategories" CASCADE;
 DROP TABLE IF EXISTS "SpiritTypes"      CASCADE;
+DROP TABLE IF EXISTS "ProcessTypes"     CASCADE;
 
 -- =====================================================================
 -- REFERENCE TABLES
 -- =====================================================================
+CREATE TABLE "ProcessTypes" (
+    "id"   SERIAL PRIMARY KEY,
+    "name" VARCHAR(255) NOT NULL UNIQUE
+);
 
 CREATE TABLE "SpiritTypes" (
     "id"          SERIAL PRIMARY KEY,
     "name"        VARCHAR(255) NOT NULL UNIQUE,
-    "description" TEXT
+    "description" TEXT,
+    "origin"      VARCHAR(255),
+    "process_id"  INT REFERENCES "ProcessTypes"("id"),
+    "ingredients" TEXT  -- e.g. "corn, rye, barley malt" for bourbon; "wheat or corn" for gin; "sugar cane" for rum 
 );
 
 CREATE TABLE "Glass" (
@@ -99,39 +112,91 @@ CREATE TABLE "DrinkTasteNotes" (
 -- REFERENCE DATA
 -- =====================================================================
 
-INSERT INTO "SpiritTypes" ("name", "description") VALUES
+INSERT INTO "ProcessTypes" ("name") VALUES
+('Distillation'),  -- 1
+('Fermentation');  -- 2
+
+INSERT INTO "SpiritTypes" ("name", "description", "origin", "process_id", "ingredients") VALUES
 ('Whiskey',
- 'The standard whiskeys of the world are Scotch, Irish, American, and Canadian. Japanese whiskey is also increasing in popularity. The longer a whiskey is aged before bottling, the better the quality and the higher the price.'),  -- 1
+ 'The standard whiskeys of the world are Scotch, Irish, American, and Canadian. Japanese whiskey is also increasing in popularity. The longer a whiskey is aged before bottling, the better the quality and the higher the price.',
+ 'Worldwide (Scotland, Ireland, USA, Canada, Japan)',
+ 1,
+ 'Grain (barley, rye, corn, wheat)'),  -- 1
 ('Vodka',
- 'Odorless and colorless, most vodkas are made from grain (wheat) mash but can be made from almost anything including corn, potatoes, and beets. It mixes well with just about anything and is the most popular liquor sold in the USA today. Popular vodkas include: Smirnoff, Absolut, Grey Goose, Stolichnaya, Ketel One, Belvedere, Skyy, Cîroc, Tito''s, and Three Olives.'),  -- 2
+ 'Odorless and colorless, it mixes well with just about anything and is the most popular liquor sold in the USA today. Popular vodkas include: Smirnoff, Absolut, Grey Goose, Stolichnaya, Ketel One, Belvedere, Skyy, Cîroc, Tito''s, and Three Olives.',
+ 'Russia / Eastern Europe',
+ 1,
+ 'Grain (wheat), corn, potatoes, beets'),  -- 2
 ('Rum',
- 'From the Caribbean and tropical islands, rum is a liquor produced from the distillation of sugar cane. There are four types of rum: light, amber, dark, and over-proofed. Light rum is clear in color, amber rum is brown, dark rum is dark brown, and over-proof rum has an alcohol content in excess of 100 proof. Light rums are usually 80–90 proof and considered dry. Amber and dark rums tend to taste sweeter compared to light rum. Dark rum has caramel added to intensify its dark color. Over-proof rum can be any color. The daiquiri originated in Cuba, combining rum, sugar, and lime juice. The most recognized brand name rum is Bacardi, produced in Puerto Rico. Some well-known names include: Don Q, Cruzan, Appleton Estate, Myers''s Dark Rum, and Mount Gay.'),  -- 3
+ 'There are four types of rum: light, amber, dark, and over-proofed. Light rum is clear in color, amber rum is brown, dark rum is dark brown, and over-proof rum has an alcohol content in excess of 100 proof. Light rums are usually 80–90 proof and considered dry. Amber and dark rums tend to taste sweeter compared to light rum. Dark rum has caramel added to intensify its dark color. Over-proof rum can be any color. The daiquiri originated in Cuba, combining rum, sugar, and lime juice. The most recognized brand name rum is Bacardi, produced in Puerto Rico. Some well-known names include: Don Q, Cruzan, Appleton Estate, Myers''s Dark Rum, and Mount Gay.',
+ 'Caribbean',
+ 1,
+ 'Sugar cane'),  -- 3
 ('Tequila',
- 'From Mexico, tequila is one of the oldest distilled spirits. The key ingredient in both tequila and mezcal is the agave plant. Blue agave is used to make tequila, while any one of five other agave varieties is used to make mezcal. Mexican law requires the product to contain at least 51% blue agave; the finest tequilas contain 100% blue agave. Tequila is double distilled, and sometimes even triple distilled. Mezcal is often distilled only once, though some premium brands distill it twice. The sugar-rich root of the blue agave plant resembles a pineapple and takes at least 8 years to mature before harvesting.'),  -- 4
+ 'Tequila is one of the oldest distilled spirits. Mexican law requires the product to contain at least 51% blue agave; the finest tequilas contain 100% blue agave. The sugar-rich root of the blue agave plant resembles a pineapple and takes at least 8 years to mature before harvesting.',
+ 'Mexico',
+ 1,
+ 'Blue agave plant (51%–100%)'),  -- 4
 ('Gin',
- 'Like vodka, gin is a neutral spirit. Its original name is Genever, later shortened to gin. Made from wheat or corn, gin has a distinct flavor characteristic unlike vodka — it smells like perfume. This comes from juniper berries and herbs introduced during the distillation process. The herbs used in gin recipes include: coriander seed, anise, cinnamon, lemon peel, almonds, angelica root, and cassia. Do not shake gin — just stir it. A gin and juice is a classic example of a gin-based mixed drink.'),  -- 5
+ 'Like vodka, gin is a neutral spirit. Its original name is Genever, later shortened to gin. Gin has a distinct flavor characteristic unlike vodka — it smells like perfume. This comes from juniper berries and herbs introduced during distillation. Do not shake gin — just stir it. A gin and juice is a classic example of a gin-based mixed drink.',
+ 'Netherlands / England',
+ 1,
+ 'Wheat or corn; juniper berries, coriander seed, anise, cinnamon, lemon peel, almonds, angelica root, cassia'),  -- 5
 ('Brandy',
- 'A liquor made from the distillation of wine. Brandy is rarely used as part of a drink recipe or combined with a mixer. The most noted brandy is cognac, made from white grapes in the Charente region of France and considered the finest brandy in the world. All cognacs are brandies, but not all brandies are cognacs. Popular cognac brands include: Hennessy, Rémy Martin, Courvoisier, D''Ussé, and Louis XIII.'),  -- 6
+ 'Brandy is rarely used as part of a drink recipe or combined with a mixer. The most noted brandy is cognac, considered the finest brandy in the world. All cognacs are brandies, but not all brandies are cognacs. Popular cognac brands include: Hennessy, Rémy Martin, Courvoisier, D''Ussé, and Louis XIII.',
+ 'France / Worldwide',
+ 1,
+ 'Wine (grapes)'),  -- 6
 ('Liqueur',
- 'Cordials and liqueurs are sweetened spirits flavored with fruits, herbs, spices, flowers, seeds, or cream. They are typically lower in alcohol than base spirits and are used in cocktails or enjoyed on their own. Popular varieties include Amaretto (almond), Chambord (black raspberry), Kahlúa (coffee), Grand Marnier (orange/cognac), Midori (melon), Baileys (Irish cream), Drambuie (honey/Scotch), Jägermeister (herbal), and many others.'),  -- 7
+ 'Cordials and liqueurs are sweetened spirits. They are typically lower in alcohol than base spirits and are used in cocktails or enjoyed on their own. Popular varieties include Amaretto (almond), Chambord (black raspberry), Kahlúa (coffee), Grand Marnier (orange/cognac), Midori (melon), Baileys (Irish cream), Drambuie (honey/Scotch), Jägermeister (herbal), and many others.',
+ 'Worldwide',
+ 1,
+ 'Varies: base spirit plus fruits, herbs, spices, flowers, seeds, or cream'),  -- 7
 ('Schnapps',
- NULL),  -- 8
+ NULL,
+ 'Germany / Austria',
+ 1,
+ 'Fruits, grains, or herbs'),  -- 8
 ('Scotch',
- 'There are two types of Scotch: blended and single malt. Single malts are the product of a single distillery, while blended Scotches can combine whiskies from multiple distilleries. By law, Scotch must be aged at least 3 years before bottling and sale. Most are aged 7–8 years, while some are aged over 20 years. Peat is used in the malting process, contributing to Scotch''s characteristic smoky flavor.'),  -- 9
+ 'There are two types of Scotch: blended and single malt. Single malts are the product of a single distillery, while blended Scotches can combine whiskies from multiple distilleries. By law, Scotch must be aged at least 3 years before bottling and sale. Most are aged 7–8 years, while some are aged over 20 years. Peat smoke during malting gives Scotch its characteristic smoky flavor.',
+ 'Scotland',
+ 1,
+ 'Malted barley (single malt) or mixed grains (blended), water, yeast'),  -- 9
 ('Beer/Malt',
- NULL),  -- 10
+ 'Two major types of beers: Ales and Lagers. Beer made in the USA is called domestic beer; beers made in other countries are called imported beers. Grains provide color, flavor, maltose, protein, and body. Hops add bitterness, flavor (bitter, spicy, herbal, floral, pine, citrus), aroma, and stability. The mineral content of water (salt, sulfate, chloride) influences the quality and flavor of the beer.',
+ 'Worldwide',
+ 2,
+ 'Grain (barley, corn, rice, wheat, oats), hops, yeast, water'),  -- 10
 ('Bourbon',
- 'Bourbon whiskey derives its name from Bourbon County, Kentucky. Bourbon recipes require at least 51% corn mash — most use 70–80% — with the remainder normally a mix of rye grain and barley malt. It must be aged in new, charred oak barrels. Some highly regarded bourbons include: Old Grand-Dad, Wild Turkey, Jim Beam, Knob Creek, Heaven Hill, and Maker''s Mark.'),  -- 11
+ 'Bourbon whiskey derives its name from Bourbon County, Kentucky. It must be aged in new, charred oak barrels. Some highly regarded bourbons include: Old Grand-Dad, Wild Turkey, Jim Beam, Knob Creek, Heaven Hill, and Maker''s Mark.',
+ 'United States (Kentucky)',
+ 1,
+ 'Corn mash (at least 51%), rye grain, barley malt'),  -- 11
 ('American Whiskey',
- 'Two main types of American whiskey: straight and blended. Straight whiskey is made from fermented mash of not less than 51% rye, corn, wheat, or barley, and must be aged in charred oak barrels. Blended whiskey requires at least 20% by volume of 100-proof straight whiskey combined with another whiskey or grain neutral spirit. Tennessee whiskey is similar to bourbon but is filtered through Tennessee charcoal drop by drop — a process called leaching — which imparts a smoky flavor. The most recognized Tennessee whiskey is Jack Daniel''s.'),  -- 12
+ 'Two main types of American whiskey: straight and blended. Straight whiskey must be aged in charred oak barrels. Blended whiskey requires at least 20% by volume of 100-proof straight whiskey combined with another whiskey or grain neutral spirit. Tennessee whiskey is similar to bourbon but is filtered through Tennessee charcoal drop by drop — a process called leaching — which imparts a smoky flavor. The most recognized Tennessee whiskey is Jack Daniel''s.',
+ 'United States',
+ 1,
+ 'Rye, corn, wheat, or barley mash (at least 51%)'),  -- 12
 ('Irish Whiskey',
- 'Irish whiskey resembles Scotch but uses no peat in the curing process, making it much sweeter by comparison. It is typically triple-distilled for extra smoothness. The three most popular Irish whiskies are Old Bushmills, Jameson''s, and Tullamore Dew. Usually enjoyed straight, it is also very popular in cold weather mixed with coffee as an Irish Coffee.'),  -- 13
+ 'Irish whiskey resembles Scotch but uses no peat in the curing process, making it much sweeter by comparison. Usually enjoyed straight, it is also very popular in cold weather mixed with coffee as an Irish Coffee. The three most popular Irish whiskies are Old Bushmills, Jameson''s, and Tullamore Dew.',
+ 'Ireland',
+ 1,
+ 'Malted and unmalted barley, water, yeast'),  -- 13
 ('Canadian Whiskey',
- 'A distinct product of Canada. All Canadian whiskies are blended and aged for at least 2 years, with most aged for 6 years before bottling. Canadian whisky is required to be aged in white oak barrels. Among the most recognized worldwide are: Seagram''s V.O., Canadian Club, and Crown Royal.'),  -- 14
+ 'All Canadian whiskies are blended and aged for at least 2 years, with most aged for 6 years before bottling. Canadian whisky is required to be aged in white oak barrels. Among the most recognized worldwide are: Seagram''s V.O., Canadian Club, and Crown Royal.',
+ 'Canada',
+ 1,
+ 'Rye, corn, wheat, barley'),  -- 14
 ('Cognac',
- 'Cognac is a type of brandy made from white grapes in the Charente region of France and is considered the finest brandy in the world. It is double-distilled in copper pot stills and aged in French oak barrels. All cognacs are brandies, but not all brandies are cognacs. Popular brands include: Hennessy, Rémy Martin, Courvoisier, D''Ussé, and Martell.'),  -- 15
+ 'Cognac is considered the finest brandy in the world. It is aged in French oak barrels. All cognacs are brandies, but not all brandies are cognacs. Popular brands include: Hennessy, Rémy Martin, Courvoisier, D''Ussé, and Martell.',
+ 'Charente region, France',
+ 1,
+ 'White grapes (primarily Ugni Blanc)'),  -- 15
 ('Sparkling Wine',
- NULL);  -- 16
+ NULL,
+ 'France (Champagne region) / Worldwide',
+ 2,
+ 'Grapes');  -- 16
 
 INSERT INTO "Glass" ("name") VALUES
 ('Highball'),           -- 1
@@ -284,7 +349,22 @@ INSERT INTO "Brands" ("name") VALUES
 ('Southern Comfort'),      -- 94
 ('Tia Maria'),             -- 95
 ('Yukon Jack'),            -- 96
-('Rumpleminze');           -- 97
+('Rumpleminze'),           -- 97
+-- Beer
+('Budweiser'),             -- 98
+('Bud Light'),             -- 99
+('Miller Lite'),           -- 100
+('Coors Light'),           -- 101
+('Michelob Ultra'),        -- 102
+('Corona'),                -- 103
+('Heineken'),              -- 104
+('Guinness'),              -- 105
+('Modelo'),                -- 106
+('Stella Artois'),         -- 107
+('Blue Moon'),             -- 108
+('Samuel Adams'),          -- 109
+('Dos Equis'),             -- 110
+('Pabst Blue Ribbon');     -- 111
 
 -- =====================================================================
 -- BOTTLES
@@ -441,7 +521,22 @@ INSERT INTO "Bottles" ("brand_id", "category_id", "name", "abv", "proof") VALUES
 (14, 7,  'DeKuyper Anisette',                      25.00,  50.00),  -- 118
 (14, 7,  'DeKuyper Crème de Noyaux',              27.00,  54.00),  -- 119
 (97, 8,  'Rumpleminze Peppermint Schnapps',        50.00, 100.00),  -- 120
-(14, 7,  'DeKuyper Sloe Gin',                      20.00,  40.00);  -- 121
+(14, 7,  'DeKuyper Sloe Gin',                      20.00,  40.00),  -- 121
+-- Beer/Malt (category_id = 10)
+(98,  10, 'Budweiser',                              5.00,  10.00),  -- 122
+(99,  10, 'Bud Light',                              4.20,   8.40),  -- 123
+(100, 10, 'Miller Lite',                            4.20,   8.40),  -- 124
+(101, 10, 'Coors Light',                            4.20,   8.40),  -- 125
+(102, 10, 'Michelob Ultra',                         4.20,   8.40),  -- 126
+(103, 10, 'Corona Extra',                           4.60,   9.20),  -- 127
+(104, 10, 'Heineken Lager',                         5.00,  10.00),  -- 128
+(105, 10, 'Guinness Draught',                       4.20,   8.40),  -- 129
+(106, 10, 'Modelo Especial',                        4.40,   8.80),  -- 130
+(107, 10, 'Stella Artois',                          5.20,  10.40),  -- 131
+(108, 10, 'Blue Moon Belgian White',                5.40,  10.80),  -- 132
+(109, 10, 'Samuel Adams Boston Lager',              5.00,  10.00),  -- 133
+(110, 10, 'Dos Equis Lager Especial',               4.20,   8.40),  -- 134
+(111, 10, 'Pabst Blue Ribbon',                      4.74,   9.48);  -- 135
 
 -- =====================================================================
 -- INGREDIENTS

@@ -12,10 +12,22 @@ datasource db {
   provider = "postgresql"
 }
 
+model ProcessType {
+  id      Int              @id @default(autoincrement())
+  name    String           @unique
+  spirits SpiritCategory[]
+
+  @@map("ProcessTypes")
+}
+
 model SpiritCategory {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
   description String?
+  origin      String?
+  processId   Int?         @map("process_id")
+  ingredients String?
+  process     ProcessType? @relation(fields: [processId], references: [id])
   bottles     Bottle[]
 
   @@map("SpiritTypes")

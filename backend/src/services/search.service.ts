@@ -1,14 +1,31 @@
 import { Request } from 'express';
 import prisma from '../lib/prisma';
 
+type BottleRow = {
+  id: bigint;
+  name: string;
+  abv: string | null;
+  proof: string | null;
+  brandName: string;
+  categoryName: string;
+  categoryDescription: string | null;
+};
+
 export const searchService = {
   searchDrink: async (req: Request) => {
     const q = String(req.query.q ?? '').trim();
     if (!q) return [];
+
+    const pattern = `%${q}%`;
+    const matchingIds = await prisma.$queryRaw<{ id: bigint }[]>`
+      SELECT id FROM "Drinks"
+      WHERE unaccent(name) ILIKE unaccent(${pattern})
+    `;
+    if (matchingIds.length === 0) return [];
+
+    const ids = matchingIds.map((r) => Number(r.id));
     return prisma.drink.findMany({
-      where: {
-        name: { contains: q, mode: 'insensitive' },
-      },
+      where: { id: { in: ids } },
       include: {
         glass: { select: { name: true } },
         ingredients: {
@@ -24,31 +41,33 @@ export const searchService = {
     const q = String(req.query.q ?? '').trim();
     if (!q) return [];
 
-    const matchingCategories = await prisma.spiritCategory.findMany({
-      where: {
-        OR: [
-          { name: { contains: q, mode: 'insensitive' } },
-          { description: { contains: q, mode: 'insensitive' } },
-        ],
-      },
-      select: { id: true },
-    });
+    const pattern = `%${q}%`;
+    const rows = await prisma.$queryRaw<BottleRow[]>`
+      SELECT
+        b.id,
+        b.name,
+        b.abv::text            AS abv,
+        b.proof::text          AS proof,
+        br.name                AS "brandName",
+        sc.name                AS "categoryName",
+        sc.description         AS "categoryDescription"
+      FROM      "Bottles"     b
+      JOIN      "Brands"      br ON b.brand_id    = br.id
+      JOIN      "SpiritTypes" sc ON b.category_id = sc.id
+      WHERE  unaccent(b.name)         ILIKE unaccent(${pattern})
+          OR unaccent(br.name)        ILIKE unaccent(${pattern})
+          OR unaccent(sc.name)        ILIKE unaccent(${pattern})
+          OR unaccent(sc.description) ILIKE unaccent(${pattern})
+      ORDER BY sc.name, br.name, b.name
+    `;
 
-    if (matchingCategories.length === 0) return [];
-
-    const categoryIds = matchingCategories.map((c) => c.id);
-
-    return prisma.bottle.findMany({
-      where: { categoryId: { in: categoryIds } },
-      include: {
-        brand: { select: { name: true } },
-        category: { select: { name: true, description: true } },
-      },
-      orderBy: [
-        { category: { name: 'asc' } },
-        { brand: { name: 'asc' } },
-        { name: 'asc' },
-      ],
-    });
+    return rows.map((r) => ({
+      id: Number(r.id),
+      name: r.name,
+      abv: r.abv,
+      proof: r.proof,
+      brand: { name: r.brandName },
+      category: { name: r.categoryName, description: r.categoryDescription },
+    }));
   },
 };
